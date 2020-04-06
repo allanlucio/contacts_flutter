@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getAllContacts();
   }
@@ -91,10 +90,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showContactPage({Contact contact}) async{
-    final recContact = await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return ContactPage(contact: contact);
-    }));
+    print("oi");
+    final recContact = await Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage(contact: contact)
+    ));
 
+    print(recContact);
     if(recContact != null){
       if(contact != null ){
         await helper.updateContact(recContact);
