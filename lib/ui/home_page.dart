@@ -73,8 +73,10 @@ class _HomePageState extends State<HomePage> {
                 width: 80.0,
                 height: 80.0,
                 decoration: BoxDecoration(
+                    
                     shape: BoxShape.circle,
                     image: DecorationImage(
+                        fit: BoxFit.cover,
                         image: contact.img != null
                             ? FileImage(File(contact.img))
                             : AssetImage("images/person.png"))),
