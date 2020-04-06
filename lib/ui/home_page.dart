@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   Widget _contactCard(BuildContext contex, int index) {
     Contact contact = contacts[index];
     return GestureDetector(
-      onTap: ()=>_showContactPage(contact: contact),
+      onTap: () => _showOptions(context, index),
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
@@ -89,23 +89,83 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showContactPage({Contact contact}) async{
-    print("oi");
-    final recContact = await Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage(contact: contact)
-    ));
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Text(
+                          "Ligar",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Text(
+                          "Editar",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showContactPage(contact: contacts[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Text(
+                          "Excluir",
+                          style: TextStyle(color: Colors.red, fontSize: 20.0),
+                        ),
+                        onPressed: () {
+                          
+                          helper.deleteContact(contacts[index].id);
+                          setState(() {
+                            contacts.removeAt(index);
+                            Navigator.pop(context);  
+                          });
+                          
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  void _showContactPage({Contact contact}) async {
+    final recContact = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ContactPage(contact: contact)));
 
     print(recContact);
-    if(recContact != null){
-      if(contact != null ){
+    if (recContact != null) {
+      if (contact != null) {
         await helper.updateContact(recContact);
-      }else{
+      } else {
         await helper.saveContact(recContact);
       }
       _getAllContacts();
     }
   }
 
-  void _getAllContacts(){
+  void _getAllContacts() {
     helper.getAllContacts().then((list) {
       setState(() {
         contacts = list;
