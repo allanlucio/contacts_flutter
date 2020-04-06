@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:contacts/helpers/contact_helper.dart';
+import 'package:contacts/ui/contact_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,11 +17,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    helper.getAllContacts().then((list) {
-      setState(() {
-        contacts = list;
-      });
-    });
+    _getAllContacts();
   }
 
   @override
@@ -33,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => _showContactPage(),
         child: Icon(Icons.add),
         backgroundColor: Colors.red,
       ),
@@ -49,6 +46,7 @@ class _HomePageState extends State<HomePage> {
   Widget _contactCard(BuildContext contex, int index) {
     Contact contact = contacts[index];
     return GestureDetector(
+      onTap: ()=>_showContactPage(contact: contact),
       child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
@@ -65,7 +63,6 @@ class _HomePageState extends State<HomePage> {
                             : AssetImage("images/person.png"))),
               ),
               Padding(
-                
                 padding: EdgeInsets.only(left: 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,5 +88,28 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _showContactPage({Contact contact}) async{
+    final recContact = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return ContactPage(contact: contact);
+    }));
+
+    if(recContact != null){
+      if(contact != null ){
+        await helper.updateContact(recContact);
+      }else{
+        await helper.saveContact(recContact);
+      }
+      _getAllContacts();
+    }
+  }
+
+  void _getAllContacts(){
+    helper.getAllContacts().then((list) {
+      setState(() {
+        contacts = list;
+      });
+    });
   }
 }
